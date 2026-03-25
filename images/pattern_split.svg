@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+
+ <!-- Background -->
+ <rect width="1024" height="1024" fill="#ff0000"/>
+
+ <!-- Main body -->
+ <g fill="#00ff00">
+  <!-- Outer body -->
+  <path d="M512 360c-180 0-320 110-320 240v424h640V600c0-130-140-240-320-240z"/>
+  
+  <!-- Inner cut (creates layered look using red) -->
+  <path d="M512 410c-140 0-250 90-250 200v414h500V610c0-110-110-200-250-200z" fill="#ff0000"/>
+  
+  <!-- Center stripe -->
+  <rect x="472" y="360" width="80" height="664"/>
+ </g>
+
+ <!-- Rear section (top of texture) -->
+ <g fill="#00ff00">
+  <rect x="700" y="240" width="220" height="140"/>
+  <rect x="740" y="240" width="140" height="140" fill="#ff0000"/>
+ </g>
+
+ <!-- Side blocks -->
+ <g fill="#00ff00">
+  <rect x="40" y="620" width="140" height="320"/>
+  <rect x="844" y="620" width="140" height="320"/>
+ </g>
+
+ <!-- Front section (bottom of texture) -->
+ <g fill="#00ff00">
+  <rect x="392" y="820" width="240" height="140"/>
+  <rect x="432" y="850" width="160" height="80" fill="#ff0000"/>
+ </g>
+
+</svg>
