@@ -5297,6 +5297,9 @@
                 (e[15] = {
                   url: "images/pattern_outline.svg",
                 }),
+                (e[16] = {
+                  url: "images/pattern_custom.svg",
+                }),
                 e.map((e) => Object.freeze(e))
               );
             })(),
