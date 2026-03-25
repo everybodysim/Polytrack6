@@ -5300,6 +5300,9 @@
                 (e[16] = {
                   url: "images/pattern_custom.svg",
                 }),
+                (e[17] = {
+                  url: "images/pattern_split.svg",
+                }),
                 e.map((e) => Object.freeze(e))
               );
             })(),
