@@ -5306,6 +5306,9 @@
                 (e[18] = {
                   url: "images/pattern_gradstripes.svg",
                 }),
+                (e[19] = {
+                  url: "images/pattern_thinarrow.svg",
+                }),
                 e.map((e) => Object.freeze(e))
               );
             })(),
