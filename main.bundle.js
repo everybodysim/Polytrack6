@@ -5303,6 +5303,9 @@
                 (e[17] = {
                   url: "images/pattern_split.svg",
                 }),
+                (e[18] = {
+                  url: "images/pattern_gradstripes.svg",
+                }),
                 e.map((e) => Object.freeze(e))
               );
             })(),
