@@ -56,10 +56,10 @@
       try{
         const r=await fetch(API.replace(/\/$/,"")+"/api/tracks/"+encodeURIComponent(id));const d=await r.json();if(!r.ok)throw new Error(d.error||"Could not load track");
         const t=d.track;if(!t||typeof t.export_data!=="string"||!t.export_data.startsWith("PolyTrack2"))throw new Error("The track code is invalid.");
-        const key=PREFIX+t.name;
-        if(localStorage.getItem(key)&&!confirm("A local track named “"+t.name+"” already exists. Replace it?")){st.textContent="Import cancelled.";return;}
+        const localName=t.export_name||t.name;const key=PREFIX+localName;
+        if(localStorage.getItem(key)&&!confirm("A local track named “"+localName+"” already exists. Replace it?")){st.textContent="Import cancelled.";return;}
         localStorage.setItem(key,JSON.stringify({data:t.export_data,saveTime:Date.now()}));
-        st.textContent="Imported “"+t.name+"”! Reload the game to refresh the Custom Tracks list.";
+        st.textContent="Imported “"+localName+"”! Reload the game to refresh the Custom Tracks list.";
         right.replaceChildren(btn("Reload game",()=>location.reload()));
       }catch(e){st.textContent="Import failed: "+e.message;}
     }
@@ -86,7 +86,7 @@
         e.preventDefault();if(API.includes("YOUR_SUBDOMAIN")){stat.textContent="Set the Worker URL in community-tracks.js before publishing.";return;}
         submit.disabled=true;stat.textContent="Publishing…";
         try{
-          const r=await fetch(API.replace(/\/$/,"")+"/api/tracks",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:name.value.trim(),description:desc.value.trim(),author:author.value.trim(),exportData:track.exportData})});
+          const r=await fetch(API.replace(/\/$/,"")+"/api/tracks",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:name.value.trim(),description:desc.value.trim(),author:author.value.trim(),exportName:track.name,exportData:track.exportData})});
           const d=await r.json();if(!r.ok)throw new Error(d.error||"Publish failed");
           localStorage.setItem("polytrack-community-author",author.value.trim());stat.textContent="Published! Your track is now in Community Tracks.";submit.disabled=false;right.replaceChildren(btn("View community tracks",()=>{tab="tracks";offset=0;renderTracks();}));
         }catch(err){stat.textContent="Could not publish: "+err.message;submit.disabled=false;}
