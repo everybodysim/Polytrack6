@@ -9,13 +9,13 @@
     if (document.getElementById("community-tracks-style")) return;
     const s = el("style"); s.id = "community-tracks-style";
     s.textContent = [
-      ".community-tracks-overlay{position:absolute;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(7,10,18,.86);font-family:inherit;color:var(--text-color,#fff)}",
+      ".community-tracks-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(7,10,18,.88);font-family:inherit;color:var(--text-color,#fff);pointer-events:auto;isolation:isolate;touch-action:auto}",
       ".community-tracks-panel{display:flex;flex-direction:column;width:min(900px,94vw);height:min(760px,92vh);background:var(--surface-color,#171d2c);border:1px solid #ffffff24;box-shadow:0 12px 50px #0009;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)}",
       ".community-tracks-header{padding:16px 20px;background:var(--surface-secondary-color,#222a3b);border-bottom:2px solid #ffffff12}.community-tracks-header h1{margin:0;font-size:clamp(25px,4vw,38px);font-weight:normal}.community-tracks-subtitle{margin-top:4px;opacity:.72;font-size:14px}",
       ".community-tracks-tabs{display:flex;gap:6px;padding:12px 16px 0}.community-tracks-tabs .selected{background:var(--button-hover-color,#394663);outline:1px solid #ffffff22}.community-tracks-content{overflow:auto;flex:1;padding:14px 16px;min-height:0}",
       ".community-track-card{display:flex;gap:12px;align-items:center;padding:13px;margin-bottom:9px;background:var(--surface-secondary-color,#222a3b);border-left:3px solid #ffffff30}.community-track-copy{flex:1;min-width:0}.community-track-copy h3{margin:0 0 5px;font-size:22px;font-weight:normal;overflow-wrap:anywhere}.community-track-copy p{margin:3px 0;opacity:.75;white-space:pre-wrap;overflow-wrap:anywhere}.community-track-actions{display:flex;gap:7px;flex-wrap:wrap}.community-tracks-empty{padding:28px 12px;text-align:center;opacity:.72}",
       ".community-tracks-form{display:grid;gap:12px;max-width:720px;margin:auto}.community-tracks-form label{display:grid;gap:5px;font-size:16px}.community-tracks-form input,.community-tracks-form textarea{box-sizing:border-box;width:100%;padding:10px;background:var(--surface-tertiary-color,#101522);color:var(--text-color,#fff);border:1px solid #ffffff30;font:inherit}.community-tracks-form textarea{min-height:85px;resize:vertical}.community-tracks-status{padding:9px 0;white-space:pre-wrap;opacity:.82}.community-tracks-footer{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:12px 16px;background:var(--surface-secondary-color,#222a3b)}.community-tracks-footer .right{display:flex;gap:8px}",
-      ".community-tracks-menu-subtitle{display:block;font-size:11px;line-height:1.3;opacity:.72;margin-top:3px;max-width:150px;white-space:normal}.community-tracks-overlay .button{cursor:pointer}",
+      ".community-tracks-menu-label{font-size:clamp(11px,1.1vw,15px)!important;line-height:1.15!important;white-space:normal!important;overflow-wrap:anywhere;text-align:center;max-width:100%}.community-tracks-overlay,.community-tracks-overlay *{pointer-events:auto}.community-tracks-overlay .button{cursor:pointer}",
       "@media(max-width:600px){.community-track-card{align-items:flex-start;flex-direction:column}.community-track-actions{width:100%}.community-tracks-panel{height:94vh}.community-tracks-header{padding:12px}.community-tracks-content{padding:10px}}"
     ].join("\n"); document.head.appendChild(s);
   };
@@ -24,16 +24,18 @@
     try { for (let i=0;i<localStorage.length;i++) { const key=localStorage.key(i); if (!key || !key.startsWith(PREFIX)) continue; try { const v=JSON.parse(localStorage.getItem(key)); if (v && typeof v.data==="string" && v.data.startsWith("PolyTrack2")) out.push({key,name:key.slice(PREFIX.length),exportData:v.data,saveTime:v.saveTime||0}); } catch {} } } catch(e) { console.warn(e); }
     return out.sort((a,b)=>b.saveTime-a.saveTime || a.name.localeCompare(b.name));
   };
-  function close(){ if(overlay) overlay.remove(); overlay=null; document.removeEventListener("keydown", keydown, true); }
-  function keydown(e){ if(e.key==="Escape") close(); }
+  function close(){ if(overlay) overlay.remove(); overlay=null; document.removeEventListener("keydown", keydown, true); document.removeEventListener("click", blockOutsideClick, true); document.removeEventListener("pointerdown", blockOutsidePointer, true); }
+  function keydown(e){ if(e.key==="Escape") { e.preventDefault(); e.stopImmediatePropagation(); close(); } }
+  function blockOutsidePointer(e){ if(overlay && !overlay.contains(e.target)){ e.preventDefault(); e.stopImmediatePropagation(); } }
+  function blockOutsideClick(e){ if(!overlay) return; if(!overlay.contains(e.target)){ e.preventDefault(); e.stopImmediatePropagation(); close(); } else if(e.target===overlay){ e.preventDefault(); e.stopPropagation(); close(); } }
   function open(){
     close(); style(); tab="tracks"; offset=0;
     overlay=el("div","community-tracks-overlay"); overlay.setAttribute("role","dialog"); overlay.setAttribute("aria-modal","true");
     const panel=el("section","community-tracks-panel"), head=el("header","community-tracks-header"), tabs=el("nav","community-tracks-tabs"), content=el("main","community-tracks-content"), footer=el("footer","community-tracks-footer"), right=el("div","right");
     head.append(el("h1","","Community Tracks"),el("div","community-tracks-subtitle","hi guys its everybodysim i added track sharing :D"));
     footer.append(btn("Back",close),right); panel.append(head,tabs,content,footer); overlay.append(panel);
-    overlay.addEventListener("click",e=>{if(e.target===overlay)close();}); document.addEventListener("keydown",keydown,true);
-    (document.getElementById("ui")||document.body).append(overlay);
+    overlay.addEventListener("click",e=>{ if(e.target===overlay){ e.preventDefault(); e.stopPropagation(); close(); } }); document.addEventListener("keydown",keydown,true); document.addEventListener("click",blockOutsideClick,true); document.addEventListener("pointerdown",blockOutsidePointer,true);
+    document.body.append(overlay);
     function tabButtons(){ tabs.replaceChildren(btn("Tracks",()=>{tab="tracks";offset=0;tabButtons();renderTracks();},tab==="tracks"?"selected":""),btn("Publish",()=>{tab="publish";tabButtons();renderPublish();},tab==="publish"?"selected":"")); }
     function status(message){ const p=el("div","community-tracks-status",message); content.prepend(p); return p; }
     function renderTracks(){
@@ -100,12 +102,14 @@
     const ui=document.getElementById("ui"); if(!ui)return;
     const buttons=ui.querySelectorAll('button img[src*="multiplayer.svg"]');
     buttons.forEach(img=>{
-      const old=img.closest("button");if(!old||old.dataset.communityTracksPatched==="1")return;
-      const replacement=old.cloneNode(true);replacement.dataset.communityTracksPatched="1";
-      const icon=replacement.querySelector("img");if(icon)icon.src="images/share.svg";
-      const label=replacement.querySelector("p");if(label){label.textContent="Community Tracks";const sub=el("small","community-tracks-menu-subtitle","hi guys its everybodysim i added track sharing :D");label.append(sub);}else replacement.append(el("p","","Community Tracks"));
-      replacement.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();open();},true);
-      old.replaceWith(replacement);
+      const button=img.closest("button");if(!button||button.dataset.communityTracksPatched==="1")return;
+      // Keep the original game button node so its native fade/slide-in animation and layout survive.
+      button.dataset.communityTracksPatched="1";
+      img.src="images/share.svg";
+      const label=button.querySelector("p");
+      if(label){label.textContent="Community Tracks";label.classList.add("community-tracks-menu-label");}
+      else { const newLabel=el("p","community-tracks-menu-label","Community Tracks");button.append(newLabel); }
+      button.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();open();},true);
     });
   }
   window.PolytrackCommunityTracks={open,close};
