@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const API = window.POLYTRACK_COMMUNITY_API || "https://polytrack-community-tracks.YOUR_SUBDOMAIN.workers.dev";
+  const API = window.POLYTRACK_COMMUNITY_API || "https://polytrack-community-tracks.ga1010.workers.dev/";
   const PREFIX = "polytrack_v5_prod_track_";
   let overlay = null, tab = "tracks", offset = 0;
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
