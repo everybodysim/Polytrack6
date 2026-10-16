@@ -5,4 +5,4 @@ compatibility_date = "2026-10-16"
 [[d1_databases]]
 binding = "DB"
 database_name = "polytrack-community-tracks"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "35bed367-c083-4e61-86b8-2fa7706a844d"
