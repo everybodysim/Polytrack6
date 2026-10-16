@@ -1,0 +1,8 @@
+name = "polytrack-community-tracks"
+main = "worker.js"
+compatibility_date = "2026-10-16"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "polytrack-community-tracks"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
